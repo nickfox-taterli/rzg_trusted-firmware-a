@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
@@ -39,15 +40,16 @@ int main(int argc, char *argv[]) {
     size_t aligned_size = (bl2_size + 3) & ~3;
 
     // 准备对齐大小的小端格式
-    uint8_t bl2_size_hex[512] = {0xFF}; // 初始化缓冲区为 0
+    uint8_t bl2_size_hex[512];
+    memset(bl2_size_hex, 0xFF, sizeof(bl2_size_hex));
     bl2_size_hex[0] = aligned_size & 0xFF;
     bl2_size_hex[1] = (aligned_size >> 8) & 0xFF;
     bl2_size_hex[2] = (aligned_size >> 16) & 0xFF;
     bl2_size_hex[3] = (aligned_size >> 24) & 0xFF;
 
     // 填充最后两个字节
-    bl2_size_hex[510] = 0xAA;
-    bl2_size_hex[511] = 0x55;
+    bl2_size_hex[510] = 0x55;
+    bl2_size_hex[511] = 0xAA;
 
     // 打开输出文件
     FILE *output = fopen(output_file, "wb");
